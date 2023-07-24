@@ -18,6 +18,10 @@ jobs:
       APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY_ID }}
       APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
       APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY }}
+      APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+      ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
+      TEAM_ID: ${{ secrets.TEAM_ID }}
       RN_ENV: ${{ secrets.RN_ENV }}
     steps:
       - uses: actions/checkout@v3

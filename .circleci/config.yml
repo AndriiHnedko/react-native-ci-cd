@@ -147,8 +147,8 @@ workflows:
           filters:
             tags:
               only: /^android-beta\/v.*/
-            branches:
-              ignore: /.*/
+#            branches:
+#              ignore: /.*/
   ios:
     jobs:
       - ios-e2e:
@@ -165,5 +165,5 @@ workflows:
           filters:
             tags:
               only: /^ios-beta\/v.*/
-            branches:
-              ignore: /.*/
+#            branches:
+#              ignore: /.*/

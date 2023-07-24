@@ -1,0 +1,169 @@
+version: 2.1
+
+commands:
+  pre-build:
+    description: Prebuild actions
+    steps:
+      - run:
+          name: Prebuild actions
+          command: sh pipeline-pre-build.sh
+
+  js-dependencies:
+    description: Install JS dependencies
+    steps:
+      - restore_cache:
+          key: yarn-v1-{{ checksum "yarn.lock" }}-{{ arch }}
+      - restore_cache:
+          key: node-v1-{{ checksum "package.json" }}-{{ arch }}
+      - run:
+          name: Install JS dependencies
+          command: yarn install
+      - save_cache:
+          key: yarn-v1-{{ checksum "yarn.lock" }}-{{ arch }}
+          paths:
+            - ~/.cache/yarn
+      - save_cache:
+          key: node-v1-{{ checksum "package.json" }}-{{ arch }}
+          paths:
+            - node_modules
+
+  pods-dependencies:
+    description: Install pods dependencies
+    steps:
+      - restore_cache:
+          key: pods-v1-{{ checksum "ios/Podfile.lock" }}-{{ arch }}
+      - run:
+          name: Install pods
+          command: pod install
+          working_directory: ios
+      - save_cache:
+          key: pods-v1-{{ checksum "ios/Podfile.lock" }}-{{ arch }}
+          paths:
+            - ios/Pods
+
+  bundler-dependencies:
+    description: Install bundler dependencies
+    steps:
+      - restore_cache:
+          key: bundle-v1-{{ checksum "Gemfile.lock" }}-{{ arch }}
+      - run:
+          name: Install fastlane dependencies
+          command: sudo bundle install
+      - save_cache:
+          key: bundle-v1-{{ checksum "Gemfile.lock" }}-{{ arch }}
+          paths:
+            - vendor/bundle
+
+  ios-detox-dependencies:
+    description: Install detox ios dependencies
+    steps:
+      - run:
+          name: Install detox dependencies
+          command: |
+            HOMEBREW_NO_AUTO_UPDATE=1 brew tap wix/brew
+            HOMEBREW_NO_AUTO_UPDATE=1 brew install applesimutils
+
+  detox-clear-cache:
+    description: Clear detox cache
+    steps:
+      - run:
+          name: Clear detox cache
+          command: |
+            npx detox clean-framework-cache 
+            npx detox build-framework-cache
+
+
+  gradle-dependencies:
+    description: 'Get Gradle dependencies'
+    steps:
+      - run:
+          working_directory: ./android
+          name: Chmod permissions
+          command: sudo chmod +x ./gradlew
+      - restore_cache:
+          name: Restore Gradle cache
+          key: v1-gradle-{{ checksum "./android/build.gradle" }}-{{ checksum  "./android/app/build.gradle" }}-{{ arch }}
+      - run:
+          working_directory: ./android
+          name: Download Gradle dependencies
+          command: ./gradlew dependencies
+      - save_cache:
+          name: Save Gradle cache
+          paths:
+            - ~/.gradle
+          key: v1-gradle-{{ checksum "./android/build.gradle" }}-{{ checksum  "./android/app/build.gradle" }}-{{ arch }}
+
+
+jobs:
+  android-beta-build:
+    docker:
+      - image: cimg/android:2022.09.2-node
+    steps:
+      - checkout
+      - pre-build
+      - js-dependencies
+      - gradle-dependencies
+      - bundler-dependencies
+      - run:
+          name: Build android
+          command: bundle exec fastlane android beta keystore_path:"$KEYSTORE_PATH"
+
+  ios-e2e:
+    macos:
+      xcode: 14.3
+    steps:
+      - checkout
+      - pre-build
+      - js-dependencies
+      - pods-dependencies
+      - bundler-dependencies
+      - ios-detox-dependencies
+      - detox-clear-cache
+      - run:
+          name: Run iOS detox build
+          command: yarn detox:ios:build:release
+      - run:
+          name: Run iOS detox test
+          command: yarn detox:ios:test:release --headless
+
+  ios-beta-build:
+    macos:
+      xcode: 14.3
+    steps:
+      - checkout
+      - pre-build
+      - js-dependencies
+      - pods-dependencies
+      - bundler-dependencies
+      - run:
+          name: Build iOS
+          command: bundle exec fastlane ios beta
+
+workflows:
+  android:
+    jobs:
+      - android-beta-build:
+          context: rn-ci-cd
+          filters:
+            tags:
+              only: /^android-beta\/v.*/
+            branches:
+              ignore: /.*/
+  ios:
+    jobs:
+      - ios-e2e:
+          context: rn-ci-cd
+          filters:
+            tags:
+              only: /^ios-.*/
+            branches:
+              ignore: /.*/
+      - ios-beta-build:
+          requires:
+            - ios-e2e
+          context: rn-ci-cd
+          filters:
+            tags:
+              only: /^ios-beta\/v.*/
+            branches:
+              ignore: /.*/

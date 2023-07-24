@@ -1,0 +1,35 @@
+name: build-android-beta
+on:
+  push:
+#    branches:
+#      - main
+    tags:
+      - 'android-beta/v*'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: dev
+    env:
+      ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      FIREBASE_APP: ${{ secrets.FIREBASE_APP }}
+      FIREBASE_DISTRIBUTION_GROUP: ${{ secrets.FIREBASE_DISTRIBUTION_GROUP }}
+      FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      RN_ENV: ${{ secrets.RN_ENV }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up ruby env
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.2
+          bundler-cache: true
+      - name: Pre build actions
+        run: sh pipeline-pre-build.sh
+      - name: Install deps
+        run: yarn install
+      - name: Build android beta
+        run: bundle exec fastlane android beta keystore_path:"$KEYSTORE_PATH"
+        env:
+          KEYSTORE_PATH: ${{ env.KEYSTORE_PATH }}

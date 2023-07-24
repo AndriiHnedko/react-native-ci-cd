@@ -1,0 +1,32 @@
+name: build-ios-beta
+on:
+  push:
+#    branches:
+#      - main
+    tags:
+      - 'ios-beta/v*'
+jobs:
+  build:
+    runs-on: macos-latest
+    environment: dev
+    env:
+      S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
+      S3_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_ACCESS_KEY }}
+      S3_BUCKET: ${{ secrets.S3_BUCKET }}
+      S3_REGION: ${{ secrets.S3_REGION }}
+      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY_ID }}
+      APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+      APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY }}
+      RN_ENV: ${{ secrets.RN_ENV }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Pre build actions
+        run: sh pipeline-pre-build.sh
+      - name: Install deps
+        run: yarn install
+      - name: Install pods
+        run: pod install
+        working-directory: ./ios
+      - name: Build ios beta
+        run: fastlane ios beta

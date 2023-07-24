@@ -1,0 +1,20 @@
+s3_bucket(ENV["S3_BUCKET"])
+s3_region(ENV["S3_REGION"])
+s3_access_key(ENV["S3_ACCESS_KEY"])
+s3_secret_access_key(ENV["S3_SECRET_ACCESS_KEY"])
+
+storage_mode("s3")
+
+type("appstore") # The default type, can be: appstore, adhoc, enterprise or development
+
+app_identifier(ENV["APP_IDENTIFIER"]) # The bundle identifier of your app
+team_id(ENV["TEAM_ID"]) # Developer Portal Team ID
+
+
+# app_identifier(["tools.fastlane.app", "tools.fastlane.app2"])
+username(ENV["APPLE_ID"]) # Your Apple Developer Portal username
+
+# For all available options run `fastlane match --help`
+# Remove the # in the beginning of the line to enable the other options
+
+# The docs are available on https://docs.fastlane.tools/actions/match

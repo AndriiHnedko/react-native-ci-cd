@@ -156,8 +156,8 @@ workflows:
           filters:
             tags:
               only: /^ios-.*/
-            branches:
-              ignore: /.*/
+#            branches:
+#              ignore: /.*/
       - ios-beta-build:
           requires:
             - ios-e2e

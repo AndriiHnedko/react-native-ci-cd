@@ -1,6 +1,6 @@
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/AndriiHnedko/react-native-ci-cd/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/AndriiHnedko/react-native-ci-cd/tree/main)
-![github actions android beta](https://github.com/AndriiHnedko/react-native-ci-cd/actions/workflows/build-android-beta.yml/badge.svg?branch=main)
-![github actions ios beta](https://github.com/AndriiHnedko/react-native-ci-cd/actions/workflows/build-ios-beta.yml/badge.svg?branch=main)
+![github actions android beta](https://github.com/AndriiHnedko/react-native-ci-cd/actions/workflows/build-android-beta.yml/badge.svg)
+![github actions ios beta](https://github.com/AndriiHnedko/react-native-ci-cd/actions/workflows/build-ios-beta.yml/badge.svg)
 
 [![CircleCI](https://dl.circleci.com/insights-snapshot/gh/AndriiHnedko/react-native-ci-cd/main/android/badge.svg?window=30d)](https://app.circleci.com/insights/github/AndriiHnedko/react-native-ci-cd/workflows/android/overview?branch=main&reporting-window=last-30-days&insights-snapshot=true)
 

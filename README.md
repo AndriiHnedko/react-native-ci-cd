@@ -53,7 +53,7 @@ You can find complete code examples in these files:
 
 #### App Store Connect API Key
 
-Create a new App Store Connect API Key in the [Users page](https://appstoreconnect.apple.com/access/api)
+Create a new App Store Connect API Key in the [Users page](https://appstoreconnect.apple.com/access/integrations/api)
 
 1. Select the "Keys" tab
 2. Give your API Key an appropriate role for the task at hand. You can read more about roles in Permissions

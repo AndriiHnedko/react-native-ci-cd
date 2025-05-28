@@ -127,6 +127,8 @@ fastlane match appstore
 fastlane match development
 ```
 
+> **NOTE**: To use match for development within a team without the App Store Connect API Key, use the `--readonly` parameter.
+
 8. Change in Xcode the signing option
 
 I assume you previously used automatic signing by Xcode. So you can now disable this check on every build type and
